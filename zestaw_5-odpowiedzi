@@ -1,0 +1,139 @@
+-- 1. Na podstawie poniższych danych dodaj nowe stanowisko pracy a następnie
+-- wyświetl wszystkie stanowiska pracy.
+-- ● nazwa stanowiska pracy: Business Analyst
+-- ● wynagrodzenie minimalne: 8000
+-- ● wynagrodzenie maksymalne: 12000
+
+INSERT INTO jobs (title, min_salary, max_salary)
+VALUES ("Business Analyst", 8000, 12000);
+    
+SELECT title from JOBS;
+
+-- 2. Dodaj miasto Szczecin a następnie wyświetl wszystkie lokalizacje.
+
+INSERT INTO locations (city)
+VALUES ("Szczecin");
+
+SELECT * FROM locations;
+
+-- 3. Na podstawie poniższych danych dodaj nowe działy a następnie wyświetl
+-- wszystkie dostępne działy.
+-- ● nazwa działu: HR
+-- ● numer ID lokalizacji: 3
+-- ● nazwa działu: Purchasing
+-- ● numer ID lokalizacji: 2
+-- ● nazwa działu: brak wartości (NULL)
+-- ● numer ID lokalizacji: 1
+
+INSERT INTO departments (department_name, location_id)
+VALUES
+	("HR", 3),
+    ("Purchasing", 2),
+    (NULL,1);
+
+-- 4. Zmień płacę minimalną na 3500 dla wszystkich stanowiskach pracy gdzie jej
+-- wartość wynosi poniżej 3500. Następnie wyświetl wszystkie stanowiska
+-- pracy.
+
+SET sql_safe_updates = 0;
+
+UPDATE jobs SET min_salary = 3500 WHERE min_salary < 3500;
+
+SELECT * FROM jobs;
+
+-- 5. Na podstawie poniższych informacji zaktualizuj dane pracownika o imieniu i
+-- nazwisku Jack Moore a następnie wyświetl dane tylko tego pracownika.
+-- ● nowe imię: Adam
+-- ● nowe nazwisko: Smith
+-- ● nowy adres email: adam_smith@yahoo.com
+
+UPDATE employees
+SET first_name = "Adam", last_name = "Smith", email = "adam_smith@yahoo.com"
+WHERE first_name = "Jack"
+AND last_name = "Moore";
+
+SELECT * FROM employees
+WHERE first_name = "Adam"
+AND last_name = "Smith";
+
+-- 6. Zmień domenę adresu email z yahoo.com na gmail.com wszystkim
+-- pracownikom zatrudnionym na stanowisku pracy o numerze id 2. Następnie
+-- wyświetl wszystkich pracowników zatrudnionych na tym stanowisku pracy.
+
+UPDATE employees
+SET email = REPLACE(email, "@yahoo.com", "@gmail.com")
+WHERE job_id = 2
+AND email LIKE "%yahoo.com";
+
+SELECT * FROM employees
+WHERE job_id = 2;
+
+-- 7. Zwiększ płacę minimalną o 5% dla każdego stanowiska pracy a następnie
+-- wyświetl wszystkie stanowiska pracy.
+
+UPDATE jobs
+SET min_salary = min_salary * 1.05;
+
+SELECT * FROM jobs;
+
+-- 8. Dla wszystkich działów znajdujących się w mieście Cracow zmień ich location_id
+-- na lokalizację z miastem Opole. Pobierz odpowiednią wartość location_id na
+-- podstawie nazwy miasta. Następnie wyświetl wszystkie dostępne działy.
+
+SELECT id FROM locations
+WHERE city = "Opole";
+
+UPDATE departments
+SET location_id = (
+	SELECT id
+    FROM locations
+    WHERE city = "Opole")
+WHERE location_id IN (
+	SELECT id
+    FROM locations
+    WHERE city = "Cracow"
+    );
+    
+SELECT * from departments
+WHERE location_id IN (
+	SELECT id
+    FROM locations
+    WHERE city = "Opole"
+    );
+
+-- 9. Usuń pracownika o imieniu i nazwisku Adam Irwin.
+
+DELETE FROM employees
+WHERE first_name = "Adam" AND last_name = "Irwin";
+
+-- 10. Usuń pracowników, którzy są zatrudnieni w mieście Gdynia. Następnie wyświetl
+-- wszystkich pracowników.
+
+DELETE FROM employees
+WHERE department_id IN (
+	SELECT id
+    FROM departments
+    WHERE location_id IN (
+		SELECT id
+        FROM locations
+        WHERE city = "Gdynia"
+        )
+	);
+    
+-- 11. Usuń najmłodszego pracownika zatrudnionego w dziale o numerze id 3 a
+-- następnie wyświetl wszystkich pracowników z tego działu.   
+
+DELETE e
+FROM employees e
+JOIN (
+	SELECT id
+    FROM employees
+    WHERE department_id = 3
+    ORDER BY birth_date DESC
+    LIMIT 1
+) AS najm
+ON e.id = najm.id;
+
+SELECT *
+FROM employees
+WHERE department_id = 3;
