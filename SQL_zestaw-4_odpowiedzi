@@ -1,0 +1,282 @@
+DROP TABLE IF EXISTS products;
+DROP TABLE IF EXISTS categories;
+
+-- 1. Utwórz tabelę products z następującymi kolumnami
+
+CREATE TABLE products (
+	id INT,
+    name VARCHAR(255),
+    price INT,
+    description TEXT,
+    created_at DATETIME,
+    category VARCHAR(255)
+    );
+
+DROP TABLE IF EXISTS products;
+
+-- 2. Utwórz tabelę products z następującymi kolumnami:
+
+CREATE TABLE products (
+	id INT NOT NULL PRIMARY KEY,
+    name VARCHAR(255) NOT NULL UNIQUE,
+    price INT NOT NULL DEFAULT 20,
+    description TEXT,
+    created_at DATETIME,
+    category VARCHAR(255)
+    );
+    
+CREATE INDEX idx_category
+ON products (category);
+
+DROP TABLE IF EXISTS products;
+
+-- 3. Utwórz tabelę products z następującymi kolumnami:
+
+CREATE TABLE products (
+	id INT NOT NULL PRIMARY KEY,
+    name VARCHAR(255) NOT NULL UNIQUE,
+    price INT NOT NULL,
+    description TEXT,
+    created_at DATETIME
+    );
+    
+DROP TABLE IF EXISTS products;
+
+-- 4. Utwórz tabele products i categories z następującymi kolumnami
+
+CREATE TABLE categories (
+	id INT NOT NULL PRIMARY KEY,
+    name VARCHAR(255) NOT NULL UNIQUE
+    );
+
+CREATE TABLE products (
+	id INT NOT NULL PRIMARY KEY AUTO_INCREMENT,
+    name VARCHAR(255) NOT NULL,
+    price INT NOT NULL,
+    description TEXT,
+    created_at DATETIME,
+    category_id INT,
+    FOREIGN KEY (category_id) REFERENCES categories(id)
+    );
+    
+DROP TABLE IF EXISTS products;
+DROP TABLE IF EXISTS categories;
+DROP TABLE IF EXISTS products_copy;
+ 
+-- Wykonaj poniższy kod w MySQL. Następnie na podstawie tabeli
+-- products utwórz tabelę products_copy, która będzie posiadała
+-- tylko kolumnę name oraz price. Dodatkowo skopiuj rekordy z
+-- tabeli products do tabeli products_copy.
+
+CREATE TABLE products (
+id INT,
+name VARCHAR(255),
+price INT,
+description TEXT,
+created_at DATETIME
+);
+
+INSERT INTO products (id, name, price)
+VALUES
+(1, 'hat', 25),
+(2, 't-shirt', 50);
+
+CREATE TABLE products_copy AS
+SELECT name, price FROM products;
+
+SELECT * from products_copy;
+
+DROP TABLE IF EXISTS products;
+DROP TABLE IF EXISTS products_copy;
+
+-- 6. Wykonaj poniższy kod w MySQL. Następnie usuń tabelę products.
+
+CREATE TABLE products (
+id INT,
+name VARCHAR(255),
+price INT,
+description TEXT,
+created_at DATETIME
+);
+
+DROP TABLE products;
+
+-- 7. Wykonaj poniższy kod w MySQL.
+-- Następnie dodaj kolumnę name do tabeli products.
+
+CREATE TABLE products (
+id INT,
+price INT,
+description TEXT,
+created_at DATETIME
+);
+
+ALTER TABLE products
+ADD COLUMN name VARCHAR(255) NOT NULL;
+
+-- 8. Następnie usuń kolumnę name z tabeli products.
+
+ALTER TABLE products
+DROP COLUMN name;
+
+-- 9. Następnie zmień nazwę tabeli
+-- products na commodities
+
+ALTER TABLE products
+RENAME TO commodities;
+
+DROP TABLE commodities;
+
+-- 10. Wykonaj poniższy kod w MySQL. Następnie zmień typ danych w
+-- kolumnie created_at na TIMESTAMP.
+
+CREATE TABLE products (
+id INT,
+name VARCHAR(255),
+price INT,
+description TEXT,
+created_at DATETIME
+);
+
+ALTER TABLE products
+MODIFY COLUMN created_at TIMESTAMP;
+
+-- 11. Następnie zmień kolumnę name tak, aby zawsze posiadała wartość.
+
+ALTER TABLE products
+MODIFY COLUMN name VARCHAR(255) NOT NULL;
+
+-- 12. Następnie zmień kolumnę name tak, aby posiadała wartości bez powtórzeń.
+
+ALTER TABLE products
+MODIFY COLUMN name VARCHAR(255) NOT NULL UNIQUE;
+
+DROP TABLE products;
+
+-- 13. Wykonaj poniższy kod w MySQL. Następnie zmień kolumnę id
+-- oraz name tak, aby kombinacja wartości w tych kolumnach była
+-- unikatowa. Nazwij constraint UC_id_name.
+
+CREATE TABLE products (
+id INT,
+name VARCHAR(255),
+price INT,
+description TEXT,
+created_at DATETIME
+);
+
+ALTER TABLE products
+ADD CONSTRAINT UC_id_name UNIQUE (id, name);
+
+DROP TABLE products;
+
+-- 14. Wykonaj poniższy kod w MySQL. Następnie zmień kolumnę name
+-- tak, aby wartości w tej kolumnie mogły się powtarzać.
+
+CREATE TABLE products (
+id INT,
+name VARCHAR(255),
+price INT,
+description TEXT,
+created_at DATETIME,
+UNIQUE (name)
+);
+
+ALTER TABLE products
+MODIFY COLUMN name VARCHAR(255) UNIQUE;
+
+DROP TABLE IF EXISTS products;
+DROP TABLE IF EXISTS commodities;
+
+-- 15. Wykonaj poniższy kod w MySQL. Następnie ustaw relację
+-- pomiędzy tabelą products a tabelą categories. Kolumną wiążącą
+-- będzie kolumna category_id z tabeli products.
+
+CREATE TABLE categories (
+id INT NOT NULL,
+name VARCHAR(255),
+PRIMARY KEY (id)
+);
+
+CREATE TABLE products (
+id INT,
+name VARCHAR(255),
+price INT,
+description TEXT,
+created_at DATETIME,
+category_id INT
+);
+
+ALTER TABLE products
+ADD CONSTRAINT fk_category
+FOREIGN KEY (category_id) REFERENCES categories(id);
+
+SHOW CREATE TABLE products;
+
+DROP TABLE products;
+DROP TABLE categories;
+
+-- 16. Wykonaj poniższy kod w MySQL. Następnie usuń relację pomiędzy
+-- tabelą categories a tabelą products.
+
+CREATE TABLE categories (
+id INT NOT NULL,
+name VARCHAR(255),
+PRIMARY KEY (id)
+);
+CREATE TABLE products (
+id INT,
+name VARCHAR(255),
+price INT,
+description TEXT,
+created_at DATETIME,
+category_id INT,
+CONSTRAINT FK_product_category FOREIGN KEY (category_id)
+REFERENCES categories(id)
+);
+
+-- Kod wskazujący powiązania między tabelą products a innymi
+SELECT
+    TABLE_NAME,
+    COLUMN_NAME,
+    CONSTRAINT_NAME,
+    REFERENCED_TABLE_NAME,
+    REFERENCED_COLUMN_NAME
+FROM
+    INFORMATION_SCHEMA.KEY_COLUMN_USAGE
+WHERE
+    TABLE_NAME = 'products'
+    AND REFERENCED_TABLE_NAME IS NOT NULL;
+    
+ALTER TABLE products
+DROP FOREIGN KEY FK_product_category;
+
+DROP TABLE IF EXISTS products;
+
+-- 17. Wykonaj poniższy kod w MySQL. Następnie dodaj kolumnę id (typ
+-- INT) przed kolumną name.
+
+CREATE TABLE products (
+name VARCHAR(255),
+price INT,
+description TEXT,
+created_at DATETIME
+);
+
+ALTER TABLE products
+ADD COLUMN id INT FIRST;
+
+DROP TABLE products;
+
+-- 18. Wykonaj poniższy kod w MySQL. Następnie dodaj kolumnę price
+-- (typ INT) przed kolumną description.
+
+CREATE TABLE products (
+id INT,
+name VARCHAR(255),
+description TEXT,
+created_at DATETIME
+);
+
+ALTER TABLE products
+ADD COLUMN price INT AFTER name;
